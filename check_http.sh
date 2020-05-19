@@ -24,6 +24,8 @@ RM=/bin/rm
 
 # Temp file
 WGETOUT=/tmp/wgetoutput
+MAINTENANCE='<div class="maintenance-title">Sorry down for maintenance.</div><div class="maintenance-description">We’re currently working to make things better, we’ll be back shortly.</div>'
+
 
 ### Functions
 # Check dependencies and paths
@@ -144,8 +146,16 @@ checkopen(){
 	RES=$(${GREP} -i ${STRING} ${TMPFILE})
 	if [ "$?" -ne "0" ];
 	then
-		echo "String ${STRING} not found in ${URL}"
-		STATUS=CRITICAL
+                # String was not found. Check if the site is in maintenance
+		MAINTENANCE_RES=$(${GREP} -i MAINTENANCE ${TMPFILE})
+                if [ "$?" -eq "0" ];
+                then
+                        echo "${FULLURL} is in maintenance mode"
+                        STATUS=WARNING
+                else
+                        echo "String ${STRING} not found in ${URL}"
+                        STATUS=CRITICAL
+                fi
 		${RM} -f ${TMPFILE}
 		output
 	fi
