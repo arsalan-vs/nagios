@@ -146,6 +146,7 @@ checkopen(){
 	RES=$(${GREP} -i ${STRING} ${TMPFILE})
 	if [ "$?" -ne "0" ];
 	then
+                # String was not found. Check if the site is in maintenance
 		MAINTENANCE_RES=$(${GREP} -i MAINTENANCE ${TMPFILE})
                 if [ "$?" -eq "0" ];
                 then
